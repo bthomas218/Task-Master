@@ -25,7 +25,6 @@ app.get("/api/tasks", (req, res) => {
 
 app.get("/api/tasks/:id", (req, res) => {
   const { id } = req.params;
-  console.log(id);
   const t = tl.getTask(parseInt(id));
   if (t) res.json(t.toJSON());
   else res.status(404).json({ error: "task not found" });
@@ -42,6 +41,16 @@ app.post("/api/tasks", (req, res) => {
       .status(400)
       .json({ "Error Name:": error.name, "Error:": error.message });
   }
+});
+
+app.patch("/api/tasks/:id", (req, res) => {
+  const { id } = req.params;
+  const { desc, status } = req.body;
+  const t = tl.getTask(parseInt(id));
+  if (t) {
+    tl.updateTask(parseInt(id), desc, status);
+    res.json(t.toJSON());
+  } else res.status(404).json({ error: "task not found" });
 });
 
 app.listen(PORT, () => {
