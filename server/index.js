@@ -19,7 +19,6 @@ app.get("/", (req, res) => {
 
 app.get("/api/tasks", (req, res) => {
   const { status } = req.query;
-  console.log(status);
   res.json(tl.listTasks(status));
 });
 
@@ -49,6 +48,15 @@ app.patch("/api/tasks/:id", (req, res) => {
   const t = tl.getTask(parseInt(id));
   if (t) {
     tl.updateTask(parseInt(id), desc, status);
+    res.json(t.toJSON());
+  } else res.status(404).json({ error: "task not found" });
+});
+
+app.delete("/api/tasks/:id", (req, res) => {
+  const { id } = req.params;
+  const t = tl.getTask(parseInt(id));
+  if (t) {
+    tl.deleteTask(parseInt(id));
     res.json(t.toJSON());
   } else res.status(404).json({ error: "task not found" });
 });
