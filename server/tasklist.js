@@ -67,4 +67,8 @@ export default class TaskList {
     }));
     fs.writeFileSync(fileName, JSON.stringify(data, null, 2));
   }
+
+  len() {
+    return this.#tasks.length;
+  }
 }

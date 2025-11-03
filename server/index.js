@@ -27,9 +27,21 @@ app.get("/api/tasks/:id", (req, res) => {
   const { id } = req.params;
   console.log(id);
   const t = tl.getTask(parseInt(id));
-  console.log(t);
   if (t) res.json(t.toJSON());
   else res.status(404).json({ error: "task not found" });
+});
+
+app.post("/api/tasks", (req, res) => {
+  try {
+    const { desc } = req.body;
+    const t = new Task(tl.len() + 1, desc);
+    tl.addTask(t);
+    res.json(t.toJSON());
+  } catch (error) {
+    res
+      .status(400)
+      .json({ "Error Name:": error.name, "Error:": error.message });
+  }
 });
 
 app.listen(PORT, () => {
