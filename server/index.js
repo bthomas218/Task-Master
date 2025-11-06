@@ -79,7 +79,7 @@ app.get("/api/tasks", validate(taskListSchema, "query"), async (req, res) => {
   const { status } = req.query;
   try {
     if (status == "All") {
-      const result = await req.db.query("SELECT * FROM TASKS");
+      const result = await req.db.query("SELECT * FROM tasks");
       res.json(result.rows);
       return;
     }
@@ -93,12 +93,29 @@ app.get("/api/tasks", validate(taskListSchema, "query"), async (req, res) => {
   }
 });
 
-app.get("/api/tasks/:id", (req, res) => {
-  const { id } = req.params;
-  const t = tl.getTask(parseInt(id));
-  if (t) res.json(t.toJSON());
-  else res.status(404).json({ error: "task not found" });
-});
+app.get(
+  "/api/tasks/:id",
+  validate(Joi.object({ id: Joi.number() }), "params"),
+  async (req, res) => {
+    const { id } = req.params;
+    try {
+      const result = await req.db.query(
+        "SELECT * FROM tasks WHERE task_id = $1",
+        [id]
+      );
+      if (result.rows.length === 0) {
+        res.status(404).json({ Error: "task not found" });
+        return;
+      }
+      res.json(result.rows);
+    } catch (error) {
+      res
+        .status(500)
+        .json({ Error: `Error Executing Query: ${error.message}` });
+      return;
+    }
+  }
+);
 
 app.post("/api/tasks", (req, res) => {
   const { error } = validate(taskSchema, req.body);
