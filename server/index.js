@@ -70,7 +70,7 @@ app.get("/", async (req, res) => {
     const dbConnCheck = await req.db.query("SELECT NOW();");
     res.json({ API: "ONLINE", DBConnection: dbConnCheck.rows[0] });
   } catch (error) {
-    res.status(500).json({ Error: `Error Executing Query: ${error.message}` });
+    res.status(500).json({ Error: error.message });
     return;
   }
 });
@@ -88,14 +88,14 @@ app.get("/api/tasks", validate(taskListSchema, "query"), async (req, res) => {
     ]);
     res.json(result.rows);
   } catch (error) {
-    res.status(500).json({ Error: `Error Executing Query: ${error.message}` });
+    res.status(500).json({ Error: error.message });
     return;
   }
 });
 
 app.get(
   "/api/tasks/:id",
-  validate(Joi.object({ id: Joi.number() }), "params"),
+  validate(Joi.object({ id: Joi.number().integer() }), "params"),
   async (req, res) => {
     const { id } = req.params;
     try {
@@ -107,26 +107,25 @@ app.get(
         res.status(404).json({ Error: "task not found" });
         return;
       }
-      res.json(result.rows);
+      res.json(result.rows[0]);
     } catch (error) {
-      res
-        .status(500)
-        .json({ Error: `Error Executing Query: ${error.message}` });
+      res.status(500).json({ Error: error.message });
       return;
     }
   }
 );
 
-app.post("/api/tasks", (req, res) => {
-  const { error } = validate(taskSchema, req.body);
-  if (error) {
-    res.status(400).send(error.details[0].message);
-    return;
-  }
+app.post("/api/tasks", validate(taskSchema, "body"), async (req, res) => {
   const { desc, status } = req.body;
-  const t = new Task(tl.len() + 1, desc, status);
-  tl.addTask(t);
-  res.json(t.toJSON());
+  try {
+    const result = await req.db.query(
+      "INSERT INTO tasks (description, status) VALUES ($1, $2);",
+      [desc, status ? status : "To do"]
+    );
+    res.status(201).json(result.rows);
+  } catch (error) {
+    res.status(500).json({ Error: error.message });
+  }
 });
 
 app.patch("/api/tasks/:id", (req, res) => {
