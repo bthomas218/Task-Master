@@ -22,22 +22,22 @@ tl.addTask(new Task(3, "Add DELETE method"));
 //Schemas
 const taskSchema = Joi.object({
   desc: Joi.string().required(),
-  status: Joi.string().valid("To do", "In Progress", "Complete"),
+  status: Joi.string().valid("To do", "In progress", "complete"),
 });
 
 const taskUpdateSchema = Joi.object({
   desc: Joi.string(),
-  status: Joi.string().valid("To do", "In Progress", "Complete"),
+  status: Joi.string().valid("To do", "In progress", "complete"),
 });
 
 const taskListSchema = Joi.object({
-  status: Joi.string().valid("All", "To do", "In Progress", "Complete"),
+  status: Joi.string().valid("All", "To do", "In progress", "complete"),
 });
 
 const validate = (schema, property) => (req, res, next) => {
   const { error } = schema.validate(req[property]);
   if (error) {
-    res.status(400).json({ error: error.details.map((d) => d.message) });
+    res.status(422).json({ error: error.details.map((d) => d.message) });
     return;
   }
   next();
@@ -75,14 +75,22 @@ app.get("/", async (req, res) => {
   }
 });
 
-app.get("/api/tasks", (req, res) => {
-  const { error } = validate(taskListSchema, req.query);
-  if (error) {
-    res.status(400).send(error.details[0].message);
+app.get("/api/tasks", validate(taskListSchema, "query"), async (req, res) => {
+  const { status } = req.query;
+  try {
+    if (status == "All") {
+      const result = await req.db.query("SELECT * FROM TASKS");
+      res.json(result.rows);
+      return;
+    }
+    const result = await req.db.query("SELECT * FROM tasks WHERE status = $1", [
+      status,
+    ]);
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ Error: `Error Executing Query: ${error.message}` });
     return;
   }
-  const { status } = req.query;
-  res.json(tl.listTasks(status));
 });
 
 app.get("/api/tasks/:id", (req, res) => {
