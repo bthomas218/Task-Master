@@ -34,8 +34,13 @@ const taskListSchema = Joi.object({
   status: Joi.string().valid("All", "To do", "In Progress", "Complete"),
 });
 
-const validate = (schema, input) => {
-  return schema.validate(input);
+const validate = (schema, property) => (req, res, next) => {
+  const { error } = schema.validate(req[property]);
+  if (error) {
+    res.status(400).json({ error: error.details.map((d) => d.message) });
+    return;
+  }
+  next();
 };
 
 // App setup
