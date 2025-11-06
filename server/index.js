@@ -43,16 +43,16 @@ const PORT = process.env.port || 3000;
 const app = express();
 
 const getClient = async (req, res, next) => {
-  let client;
   try {
-    client = await pool.connect();
+    const client = await pool.connect();
     req.db = client;
+
+    res.on("finish", () => client.release());
+
     next();
   } catch (error) {
     console.error(`Error connecting to database: ${error.message}`);
     res.status(500).json({ Error: `Database connection error` });
-  } finally {
-    if (client) client.release();
   }
 };
 
