@@ -41,20 +41,32 @@ const validate = (schema, input) => {
 // App setup
 const PORT = process.env.port || 3000;
 const app = express();
-app.use(express.json());
 
-// API
-app.get("/", async (req, res) => {
+const getClient = async (req, res, next) => {
   let client;
   try {
     client = await pool.connect();
-    const dbConnCheck = await client.query("SELECT NOW();");
-    res.json({ API: "ONLINE", DBConnection: dbConnCheck.rows[0] });
-  } catch (err) {
-    res.status(500).json({ Error: `Error Executing Query: ${err.stack}` });
-    return;
+    req.db = client;
+    next();
+  } catch (error) {
+    console.error(`Error connecting to database: ${error.message}`);
+    res.status(500).json({ Error: `Database connection error` });
   } finally {
     if (client) client.release();
+  }
+};
+
+app.use(express.json());
+app.use(getClient);
+
+// API
+app.get("/", async (req, res) => {
+  try {
+    const dbConnCheck = await req.db.query("SELECT NOW();");
+    res.json({ API: "ONLINE", DBConnection: dbConnCheck.rows[0] });
+  } catch (error) {
+    res.status(500).json({ Error: `Error Executing Query: ${error.message}` });
+    return;
   }
 });
 
