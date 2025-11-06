@@ -2,9 +2,16 @@ import express from "express";
 import Joi from "joi";
 import Task from "./task.js";
 import TaskList from "./tasklist.js";
+import { config } from "dotenv";
+import { Pool } from "pg";
 
-const PORT = process.env.port || 3000;
-const app = express();
+//Load Enviroment Variables
+config();
+
+//Connect to database
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
 
 // For testing
 const tl = new TaskList();
@@ -12,6 +19,7 @@ tl.addTask(new Task(1, "Add POST method"));
 tl.addTask(new Task(2, "Add PATCH method"));
 tl.addTask(new Task(3, "Add DELETE method"));
 
+//Schemas
 const taskSchema = Joi.object({
   desc: Joi.string().required(),
   status: Joi.string().valid("To do", "In Progress", "Complete"),
@@ -30,10 +38,24 @@ const validate = (schema, input) => {
   return schema.validate(input);
 };
 
+// App setup
+const PORT = process.env.port || 3000;
+const app = express();
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("ONLINE");
+// API
+app.get("/", async (req, res) => {
+  let client;
+  try {
+    client = await pool.connect();
+    const dbConnCheck = await client.query("SELECT NOW();");
+    res.json({ API: "ONLINE", DBConnection: dbConnCheck.rows[0] });
+  } catch (err) {
+    res.status(500).json({ Error: `Error Executing Query: ${err.stack}` });
+    return;
+  } finally {
+    if (client) client.release();
+  }
 });
 
 app.get("/api/tasks", (req, res) => {
