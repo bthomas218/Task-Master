@@ -1,17 +1,21 @@
-# 📝 Todo CLI App (JavaScript)
+# Task Master App (JavaScript)
 
-A simple command-line todo list app written in modern **JavaScript (Node.js)**.  
-Uses classes, JSON persistence, and demonstrates OOP best practices. Now being turned into an API!
+A RESTful Task Management API built with Node.js, Express, and PostgreSQL.
+Implements modern JavaScript syntax, clean architecture, and persistent storage through a real database.
 
 ---
 
-## 🚀 Features
+🚀 Features
 
-- Add, list, update, and delete tasks
-- Task status tracking (to do, in progress, complete)
-- Data saved to JSON file on exit
-- Loads previous tasks on startup
-- Modern ES6+ syntax with private fields, getters/setters
+Full CRUD API: Add, list, update, and delete tasks
+
+Task status tracking: to-do, in progress, completed
+
+PostgreSQL database persistence (no JSON files!)
+
+Input validation and error handling
+
+Modern ES2022+ syntax with async/await and modular design
 
 ---
 
@@ -20,7 +24,7 @@ Uses classes, JSON persistence, and demonstrates OOP best practices. Now being t
 - Node.js
 - JavaScript (ES2022+)
 - Expres.js v5
-- JSON for persistence
+- PostgreSQL (Hosted on Neon)
 
 ---
 
@@ -31,15 +35,22 @@ Uses classes, JSON persistence, and demonstrates OOP best practices. Now being t
 ├── README.md
 └── server
    ├── index.js
-   ├── node_modules
    ├── package-lock.json
-   ├── package.json
-   ├── task.js
-   └── tasklist.js
+   └── package.json
+
 ```
 
 ---
 
 ## ▶️ Usage
 
-Not ready for use
+Live Link coming soon!
+
+Or run locally if you set up your own database:
+
+```bash
+
+npm install
+node server/index.js
+
+```
