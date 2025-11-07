@@ -1,7 +1,5 @@
 import express from "express";
 import Joi from "joi";
-import Task from "./task.js";
-import TaskList from "./tasklist.js";
 import { config } from "dotenv";
 import { Pool } from "pg";
 
@@ -12,12 +10,6 @@ config();
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
-
-// For testing
-const tl = new TaskList();
-tl.addTask(new Task(1, "Add POST method"));
-tl.addTask(new Task(2, "Add PATCH method"));
-tl.addTask(new Task(3, "Add DELETE method"));
 
 //Schemas
 const taskSchema = Joi.object({
@@ -161,14 +153,31 @@ app.patch(
   }
 );
 
-app.delete("/api/tasks/:id", (req, res) => {
-  const { id } = req.params;
-  const t = tl.getTask(parseInt(id));
-  if (t) {
-    tl.deleteTask(parseInt(id));
-    res.json(t.toJSON());
-  } else res.status(404).json({ error: "task not found" });
-});
+app.delete(
+  "/api/tasks/:id",
+  validate(Joi.object({ id: Joi.number().integer() }), "params"),
+  async (req, res) => {
+    const { id } = req.params;
+
+    try {
+      const result = await req.db.query(
+        `DELETE FROM tasks 
+        WHERE task_id = $1
+        RETURNING *;`,
+        [id]
+      );
+
+      if (result.rows.length === 0) {
+        res.status(404).json({ Error: "Task not found" });
+        return;
+      }
+
+      res.json(result.rows);
+    } catch (error) {
+      res.status(500).json({ Error: error.message });
+    }
+  }
+);
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
