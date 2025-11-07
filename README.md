@@ -1,11 +1,11 @@
-# Task Master App (JavaScript)
+# Task Master
 
 A RESTful Task Management API built with Node.js, Express, and PostgreSQL.
 Implements modern JavaScript syntax, clean architecture, and persistent storage through a real database.
 
 ---
 
-🚀 Features
+## 🚀 Features
 
 Full CRUD API: Add, list, update, and delete tasks
 
@@ -44,13 +44,21 @@ Modern ES2022+ syntax with async/await and modular design
 
 ## ▶️ Usage
 
-Live Link coming soon!
+_Live Link coming soon!_
 
-Or run locally if you set up your own database:
+### API Endpoints
 
-```bash
-
-npm install
-node server/index.js
-
-```
+- `GET /tasks` - List all tasks
+  - Query Parameters:
+  - `status` (optional) - Filter tasks by status:
+    - `To do`, `In progress`, `complete`, (Default) `All`
+- `GET /tasks/:id` - Get a specific task by ID
+- `POST /tasks` - Create a new task
+  - Request Body:
+    - `description` (string, required) - Description of the task
+    - `status` (string, optional) - Status of the task ((Default)`To do`, `In progress`, `complete`)
+- `PATCH /tasks/:id` - Update the status or description of an existing task with the given ID
+  - Request Body:
+    - `description` (string, optional) - New description of the task
+    - `status` (string, optional) - New status of the task (`To do`, `In progress`, `complete`)
+- `DELETE /tasks/:id` - Delete a task with the given ID
