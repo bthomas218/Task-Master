@@ -119,8 +119,10 @@ app.post("/api/tasks", validate(taskSchema, "body"), async (req, res) => {
   const { desc, status } = req.body;
   try {
     const result = await req.db.query(
-      "INSERT INTO tasks (description, status) VALUES ($1, $2);",
-      [desc, status ? status : "To do"]
+      `INSERT INTO tasks (description, status) 
+      VALUES ($1, COALESCE($2, 'To do'::status))
+      RETURNING *;`,
+      [desc, status]
     );
     res.status(201).json(result.rows);
   } catch (error) {
@@ -128,20 +130,36 @@ app.post("/api/tasks", validate(taskSchema, "body"), async (req, res) => {
   }
 });
 
-app.patch("/api/tasks/:id", (req, res) => {
-  const { id } = req.params;
-  const { error } = validate(taskUpdateSchema, req.body);
-  if (error) {
-    res.status(400).send(error.details[0].message);
-    return;
+app.patch(
+  "/api/tasks/:id",
+  validate(Joi.object({ id: Joi.number().integer() }), "params"),
+  validate(taskUpdateSchema, "body"),
+  async (req, res) => {
+    const { id } = req.params;
+    const { desc, status } = req.body;
+
+    try {
+      const result = await req.db.query(
+        `UPDATE tasks 
+        SET description = COALESCE($1, description), 
+        status = COALESCE($2, status),
+        updated_at = NOW() 
+        WHERE task_id = $3
+        RETURNING description, status, updated_at;`,
+        [desc, status, id]
+      );
+
+      if (result.rows.length === 0) {
+        res.status(404).json({ Error: "Task not found" });
+        return;
+      }
+
+      res.json(result.rows);
+    } catch (error) {
+      res.status(500).json({ Error: error.message });
+    }
   }
-  const { desc, status } = req.body;
-  const t = tl.getTask(parseInt(id));
-  if (t) {
-    tl.updateTask(parseInt(id), desc, status);
-    res.json(t.toJSON());
-  } else res.status(404).json({ error: "task not found" });
-});
+);
 
 app.delete("/api/tasks/:id", (req, res) => {
   const { id } = req.params;
