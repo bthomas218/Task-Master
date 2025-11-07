@@ -23,15 +23,18 @@ const taskUpdateSchema = Joi.object({
 });
 
 const taskListSchema = Joi.object({
-  status: Joi.string().valid("All", "To do", "In progress", "complete"),
+  status: Joi.string()
+    .valid("All", "To do", "In progress", "complete")
+    .default("All"),
 });
 
 const validate = (schema, property) => (req, res, next) => {
-  const { error } = schema.validate(req[property]);
+  const { error, value } = schema.validate(req[property]);
   if (error) {
     res.status(422).json({ error: error.details.map((d) => d.message) });
     return;
   }
+  req.validated = value;
   next();
 };
 
@@ -68,9 +71,9 @@ app.get("/", async (req, res) => {
 });
 
 app.get("/api/tasks", validate(taskListSchema, "query"), async (req, res) => {
-  const { status } = req.query;
+  const { status } = req.validated;
   try {
-    if (status == "All") {
+    if (status === "All") {
       const result = await req.db.query("SELECT * FROM tasks");
       res.json(result.rows);
       return;
