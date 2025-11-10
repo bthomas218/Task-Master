@@ -114,7 +114,7 @@ app.get(
 );
 
 app.post("/api/tasks", validate(taskSchema, "body"), async (req, res) => {
-  const { desc, status } = req.validate.body;
+  const { desc, status } = req.validated.body;
   try {
     const result = await req.db.query(
       `INSERT INTO tasks (description, status) 
@@ -122,7 +122,7 @@ app.post("/api/tasks", validate(taskSchema, "body"), async (req, res) => {
       RETURNING *;`,
       [desc, status]
     );
-    res.status(201).json(result.rows);
+    res.status(201).json(result.rows[0]);
   } catch (error) {
     res.status(500).json({ Error: error.message });
   }
@@ -135,6 +135,10 @@ app.patch(
   async (req, res) => {
     const { id } = req.validated.params;
     const { desc, status } = req.validated.body;
+
+    if (!desc && !status) {
+      res.status(204);
+    }
 
     try {
       const result = await req.db.query(
@@ -152,7 +156,7 @@ app.patch(
         return;
       }
 
-      res.json(result.rows);
+      res.json(result.rows[0]);
     } catch (error) {
       res.status(500).json({ Error: error.message });
     }
