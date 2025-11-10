@@ -29,12 +29,15 @@ const taskListSchema = Joi.object({
 });
 
 const validate = (schema, property) => (req, res, next) => {
+  if (!req.validated) {
+    req.validated = {};
+  }
   const { error, value } = schema.validate(req[property]);
   if (error) {
     res.status(422).json({ error: error.details.map((d) => d.message) });
     return;
   }
-  req.validated = value;
+  req.validated[property] = value;
   next();
 };
 
@@ -71,7 +74,7 @@ app.get("/", async (req, res) => {
 });
 
 app.get("/api/tasks", validate(taskListSchema, "query"), async (req, res) => {
-  const { status } = req.validated;
+  const { status } = req.validated.query;
   try {
     if (status === "All") {
       const result = await req.db.query("SELECT * FROM tasks");
@@ -92,7 +95,7 @@ app.get(
   "/api/tasks/:id",
   validate(Joi.object({ id: Joi.number().integer() }), "params"),
   async (req, res) => {
-    const { id } = req.params;
+    const { id } = req.validated.params;
     try {
       const result = await req.db.query(
         "SELECT * FROM tasks WHERE task_id = $1",
@@ -111,7 +114,7 @@ app.get(
 );
 
 app.post("/api/tasks", validate(taskSchema, "body"), async (req, res) => {
-  const { desc, status } = req.body;
+  const { desc, status } = req.validate.body;
   try {
     const result = await req.db.query(
       `INSERT INTO tasks (description, status) 
@@ -130,8 +133,8 @@ app.patch(
   validate(Joi.object({ id: Joi.number().integer() }), "params"),
   validate(taskUpdateSchema, "body"),
   async (req, res) => {
-    const { id } = req.params;
-    const { desc, status } = req.body;
+    const { id } = req.validated.params;
+    const { desc, status } = req.validated.body;
 
     try {
       const result = await req.db.query(
@@ -160,7 +163,7 @@ app.delete(
   "/api/tasks/:id",
   validate(Joi.object({ id: Joi.number().integer() }), "params"),
   async (req, res) => {
-    const { id } = req.params;
+    const { id } = req.validated.params;
 
     try {
       const result = await req.db.query(
@@ -175,7 +178,7 @@ app.delete(
         return;
       }
 
-      res.json(result.rows);
+      res.json(result.rows[0]);
     } catch (error) {
       res.status(500).json({ Error: error.message });
     }
