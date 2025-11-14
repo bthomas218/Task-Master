@@ -42,8 +42,7 @@ const validate = (schema, property) => (req, res, next) => {
 };
 
 // App setup
-const PORT = process.env.port || 3000;
-const app = express();
+export const app = express();
 
 const getClient = async (req, res, next) => {
   try {
@@ -188,7 +187,3 @@ app.delete(
     }
   }
 );
-
-app.listen(PORT, () => {
-  console.log(`Listening on port ${PORT}`);
-});
