@@ -17,7 +17,7 @@ export const createTask = async (db, desc, status) => {
 /**
  * Service to get tasks, optionally filtered by status
  * @param {*} db - The database client
- * @param {*} status - Status of tasks you want to see
+ * @param {*} status - Status of tasks to retrieve
  * @returns {Promise<Object>} - A list of tasks
  */
 export const getTasks = async (db, status) => {
@@ -29,4 +29,17 @@ export const getTasks = async (db, status) => {
       : "SELECT * FROM tasks WHERE status = $1";
   const result = await db.query(query, status === "All" ? [] : values);
   return result.rows;
+};
+
+/**
+ * Service to get a task by its ID
+ * @param {*} db - The database client
+ * @param {*} id - ID of the task to retrieve
+ * @returns {Promise<Object>} - The task with the specified ID
+ */
+export const getTaskById = async (db, id) => {
+  const query = "SELECT * FROM tasks WHERE task_id = $1";
+  const values = [id];
+  const result = await db.query(query, values);
+  return result.rows[0];
 };

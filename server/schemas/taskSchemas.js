@@ -16,3 +16,7 @@ export const taskQuerySchema = Joi.object({
     .valid("All", "To do", "In progress", "complete")
     .default("All"),
 });
+
+export const taskIdSchema = Joi.object({
+  id: Joi.number().integer().required(),
+});

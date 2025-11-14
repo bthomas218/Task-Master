@@ -21,3 +21,17 @@ export const getTasksController = async (req, res) => {
     res.status(500).json({ Error: error.message });
   }
 };
+
+export const getTaskByIdController = async (req, res) => {
+  const { id } = req.validated.params;
+  try {
+    const task = await TaskService.getTaskById(req.db, id);
+    if (!task) {
+      res.status(404).json({ Error: "Task not found" });
+      return;
+    }
+    res.json(task);
+  } catch (error) {
+    res.status(500).json({ Error: error.message });
+  }
+};

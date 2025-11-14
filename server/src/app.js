@@ -24,29 +24,6 @@ export default app;
 // Old API Endpoints to be refactored
 
 // TODO: Split this endpoint into routes, controllers, services
-app.get(
-  "/api/tasks/:id",
-  validate(Joi.object({ id: Joi.number().integer() }), "params"),
-  async (req, res) => {
-    const { id } = req.validated.params;
-    try {
-      const result = await req.db.query(
-        "SELECT * FROM tasks WHERE task_id = $1",
-        [id]
-      );
-      if (result.rows.length === 0) {
-        res.status(404).json({ Error: "task not found" });
-        return;
-      }
-      res.json(result.rows[0]);
-    } catch (error) {
-      res.status(500).json({ Error: error.message });
-      return;
-    }
-  }
-);
-
-// TODO: Split this endpoint into routes, controllers, services
 app.patch(
   "/api/tasks/:id",
   validate(Joi.object({ id: Joi.number().integer() }), "params"),

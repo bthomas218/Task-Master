@@ -2,9 +2,14 @@ import express from "express";
 import {
   createTaskController,
   getTasksController,
+  getTaskByIdController,
 } from "../controllers/taskController.js";
 import validate from "../middleware/validate.js";
-import { taskCreateSchema, taskQuerySchema } from "../schemas/taskSchemas.js";
+import {
+  taskCreateSchema,
+  taskQuerySchema,
+  taskIdSchema,
+} from "../schemas/taskSchemas.js";
 
 const router = express.Router();
 
@@ -12,5 +17,11 @@ const router = express.Router();
 router.post("/tasks", validate(taskCreateSchema, "body"), createTaskController);
 // Route to get tasks, optionally filtered by status
 router.get("/tasks", validate(taskQuerySchema, "query"), getTasksController);
+// Route to get a task by its ID
+router.get(
+  "/tasks/:id",
+  validate(taskIdSchema, "params"),
+  getTaskByIdController
+);
 
 export default router;
