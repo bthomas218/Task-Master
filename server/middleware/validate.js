@@ -10,7 +10,7 @@ const validate = (schema, property) => (req, res, next) => {
   }
   const { error, value } = schema.validate(req[property]);
   if (error) {
-    res.status(422).json({ error: error.details.map((d) => d.message) });
+    res.status(400).json({ error: error.details.map((d) => d.message) });
     return;
   }
   req.validated[property] = value;
