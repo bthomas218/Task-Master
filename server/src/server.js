@@ -1,15 +1,6 @@
 import express from "express";
 import Joi from "joi";
-import { config } from "dotenv";
-import { Pool } from "pg";
-
-//Load Enviroment Variables
-config();
-
-//Connect to database
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+import { pool } from "../db/pool.js";
 
 //Schemas
 const taskSchema = Joi.object({
