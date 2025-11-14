@@ -4,6 +4,7 @@ import {
   getTasksController,
   getTaskByIdController,
   updateTaskController,
+  deleteTaskController,
 } from "../controllers/taskController.js";
 import validate from "../middleware/validate.js";
 import {
@@ -31,6 +32,12 @@ router.patch(
   validate(taskIdSchema, "params"),
   validate(taskUpdateSchema, "body"),
   updateTaskController
+);
+// Route to delete a task
+router.delete(
+  "/tasks/:id",
+  validate(taskIdSchema, "params"),
+  deleteTaskController
 );
 
 export default router;

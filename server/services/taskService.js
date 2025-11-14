@@ -63,3 +63,18 @@ export const updateTask = async (db, id, desc, status) => {
   const result = await db.query(query, vaulues);
   return result.rows[0];
 };
+
+/**
+ * Service to delete a task
+ * @param {*} db - The database client
+ * @param {*} id - The id of the task to delete
+ * @returns {Promise<void>} - The deleted task
+ */
+export const deleteTask = async (db, id) => {
+  const query = `DELETE FROM tasks 
+        WHERE task_id = $1
+        RETURNING *;`;
+  const values = [id];
+  const result = await db.query(query, values);
+  return result.rows[0];
+};

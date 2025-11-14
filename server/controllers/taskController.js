@@ -56,3 +56,18 @@ export const updateTaskController = async (req, res) => {
     res.status(500).json({ Error: error.message });
   }
 };
+
+// Controller to handle deleting a task
+export const deleteTaskController = async (req, res) => {
+  const { id } = req.validated.params;
+  try {
+    const task = await TaskService.deleteTask(req.db, id);
+    if (!task) {
+      res.status(404).json({ Error: "Task not found" });
+      return;
+    }
+    res.json(task);
+  } catch (error) {
+    res.status(500).json({ Error: error.message });
+  }
+};
