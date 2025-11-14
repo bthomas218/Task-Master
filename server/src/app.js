@@ -24,25 +24,6 @@ export default app;
 // Old API Endpoints to be refactored
 
 // TODO: Split this endpoint into routes, controllers, services
-app.get("/api/tasks", validate(taskQuerySchema, "query"), async (req, res) => {
-  const { status } = req.validated.query;
-  try {
-    if (status === "All") {
-      const result = await req.db.query("SELECT * FROM tasks");
-      res.json(result.rows);
-      return;
-    }
-    const result = await req.db.query("SELECT * FROM tasks WHERE status = $1", [
-      status,
-    ]);
-    res.json(result.rows);
-  } catch (error) {
-    res.status(500).json({ Error: error.message });
-    return;
-  }
-});
-
-// TODO: Split this endpoint into routes, controllers, services
 app.get(
   "/api/tasks/:id",
   validate(Joi.object({ id: Joi.number().integer() }), "params"),

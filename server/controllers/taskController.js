@@ -10,3 +10,14 @@ export const createTaskController = async (req, res) => {
     res.status(500).json({ Error: error.message });
   }
 };
+
+// Controller to handle fetching tasks, optionally filtered by status
+export const getTasksController = async (req, res) => {
+  const { status } = req.validated.query;
+  try {
+    const tasks = await TaskService.getTasks(req.db, status);
+    res.json(tasks);
+  } catch (error) {
+    res.status(500).json({ Error: error.message });
+  }
+};
