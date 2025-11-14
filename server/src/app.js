@@ -1,41 +1,16 @@
 import express from "express";
-import { pool } from "../db/pool.js";
+
 import Joi from "joi";
 import {
   taskCreateSchema,
   taskQuerySchema,
   taskUpdateSchema,
 } from "../schemas/taskSchemas.js";
-
-const validate = (schema, property) => (req, res, next) => {
-  if (!req.validated) {
-    req.validated = {};
-  }
-  const { error, value } = schema.validate(req[property]);
-  if (error) {
-    res.status(422).json({ error: error.details.map((d) => d.message) });
-    return;
-  }
-  req.validated[property] = value;
-  next();
-};
+import validate from "../middleware/validate.js";
+import getClient from "../middleware/dbClient.js";
 
 // App setup
 export const app = express();
-
-const getClient = async (req, res, next) => {
-  try {
-    const client = await pool.connect();
-    req.db = client;
-
-    res.on("finish", () => client.release());
-
-    next();
-  } catch (error) {
-    console.error(`Error connecting to database: ${error.message}`);
-    res.status(500).json({ Error: `Database connection error` });
-  }
-};
 
 app.use(express.json());
 app.use(getClient);
