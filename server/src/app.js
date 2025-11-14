@@ -1,31 +1,29 @@
 import express from "express";
-
-import Joi from "joi";
-import {
-  taskCreateSchema,
-  taskQuerySchema,
-  taskUpdateSchema,
-} from "../schemas/taskSchemas.js";
-import validate from "../middleware/validate.js";
+import { default as taskRoutes } from "../routes/taskRoutes.js";
 import getClient from "../middleware/dbClient.js";
+import validate from "../middleware/validate.js";
+import { taskQuerySchema, taskUpdateSchema } from "../schemas/taskSchemas.js";
+import Joi from "joi";
 
-// App setup
-export const app = express();
+const app = express();
 
 app.use(express.json());
 app.use(getClient);
 
-// API
+// Health Route
 app.get("/", async (req, res) => {
-  try {
-    const dbConnCheck = await req.db.query("SELECT NOW();");
-    res.json({ API: "ONLINE", DBConnection: dbConnCheck.rows[0] });
-  } catch (error) {
-    res.status(500).json({ Error: error.message });
-    return;
-  }
+  const dbConnCheck = await req.db.query("SELECT NOW();");
+  res.json({ status: "API ONLINE", dbTime: dbConnCheck.rows[0] });
 });
 
+// API Routes
+app.use("/api", taskRoutes);
+
+export default app;
+
+// Old API Endpoints to be refactored
+
+// TODO: Split this endpoint into routes, controllers, services
 app.get("/api/tasks", validate(taskQuerySchema, "query"), async (req, res) => {
   const { status } = req.validated.query;
   try {
@@ -44,6 +42,7 @@ app.get("/api/tasks", validate(taskQuerySchema, "query"), async (req, res) => {
   }
 });
 
+// TODO: Split this endpoint into routes, controllers, services
 app.get(
   "/api/tasks/:id",
   validate(Joi.object({ id: Joi.number().integer() }), "params"),
@@ -66,21 +65,7 @@ app.get(
   }
 );
 
-app.post("/api/tasks", validate(taskCreateSchema, "body"), async (req, res) => {
-  const { desc, status } = req.validated.body;
-  try {
-    const result = await req.db.query(
-      `INSERT INTO tasks (description, status) 
-      VALUES ($1, COALESCE($2, 'To do'::status))
-      RETURNING *;`,
-      [desc, status]
-    );
-    res.status(201).json(result.rows[0]);
-  } catch (error) {
-    res.status(500).json({ Error: error.message });
-  }
-});
-
+// TODO: Split this endpoint into routes, controllers, services
 app.patch(
   "/api/tasks/:id",
   validate(Joi.object({ id: Joi.number().integer() }), "params"),
@@ -116,6 +101,7 @@ app.patch(
   }
 );
 
+// TODO: Split this endpoint into routes, controllers, services
 app.delete(
   "/api/tasks/:id",
   validate(Joi.object({ id: Joi.number().integer() }), "params"),
