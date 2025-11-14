@@ -43,3 +43,23 @@ export const getTaskById = async (db, id) => {
   const result = await db.query(query, values);
   return result.rows[0];
 };
+
+/**
+ * Service to update a task
+ * @param {*} db - The database client
+ * @param {*} id - The id of the task to update
+ * @param {*} desc - The new description of the task
+ * @param {*} status - The new status of the task
+ * @returns {Promise<Object>} - The updated task
+ */
+export const updateTask = async (db, id, desc, status) => {
+  const query = `UPDATE tasks 
+        SET description = COALESCE($1, description), 
+        status = COALESCE($2, status),
+        updated_at = NOW() 
+        WHERE task_id = $3
+        RETURNING description, status, updated_at;`;
+  const vaulues = [desc, status, id];
+  const result = await db.query(query, vaulues);
+  return result.rows[0];
+};

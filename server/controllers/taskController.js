@@ -22,10 +22,31 @@ export const getTasksController = async (req, res) => {
   }
 };
 
+// Controller to handle fetching a task by its ID
 export const getTaskByIdController = async (req, res) => {
   const { id } = req.validated.params;
   try {
     const task = await TaskService.getTaskById(req.db, id);
+    if (!task) {
+      res.status(404).json({ Error: "Task not found" });
+      return;
+    }
+    res.json(task);
+  } catch (error) {
+    res.status(500).json({ Error: error.message });
+  }
+};
+
+// Controller to handle updating a task
+export const updateTaskController = async (req, res) => {
+  const { id } = req.validated.params;
+  const { desc, status } = req.validated.body;
+  if (!desc && !status) {
+    res.status(204).end();
+    return;
+  }
+  try {
+    const task = await TaskService.updateTask(req.db, id, desc, status);
     if (!task) {
       res.status(404).json({ Error: "Task not found" });
       return;

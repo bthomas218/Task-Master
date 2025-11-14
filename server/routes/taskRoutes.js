@@ -3,12 +3,14 @@ import {
   createTaskController,
   getTasksController,
   getTaskByIdController,
+  updateTaskController,
 } from "../controllers/taskController.js";
 import validate from "../middleware/validate.js";
 import {
   taskCreateSchema,
   taskQuerySchema,
   taskIdSchema,
+  taskUpdateSchema,
 } from "../schemas/taskSchemas.js";
 
 const router = express.Router();
@@ -22,6 +24,13 @@ router.get(
   "/tasks/:id",
   validate(taskIdSchema, "params"),
   getTaskByIdController
+);
+// Route to update a task
+router.patch(
+  "/tasks/:id",
+  validate(taskIdSchema, "params"),
+  validate(taskUpdateSchema, "body"),
+  updateTaskController
 );
 
 export default router;
