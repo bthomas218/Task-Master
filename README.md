@@ -11,7 +11,7 @@ Full CRUD API: Add, list, update, and delete tasks
 
 Task status tracking: to-do, in progress, completed
 
-PostgreSQL database persistence (no JSON files!)
+PostgreSQL database persistence
 
 Input validation and error handling
 
@@ -34,9 +34,25 @@ Modern ES2022+ syntax with async/await and modular design
 .
 ├── README.md
 └── server
-   ├── index.js
+   ├── controllers
+   │  └── taskController.js
+   ├── db
+   │  └── pool.js
+   ├── middleware
+   │  ├── dbClient.js
+   │  └── validate.js
    ├── package-lock.json
-   └── package.json
+   ├── package.json
+   ├── routes
+   │  └── taskRoutes.js
+   ├── schemas
+   │  └── taskSchemas.js
+   ├── services
+   │  └── taskService.js
+   ├── src
+   │  ├── app.js
+   │  └── server.js
+   └── utils
 
 ```
 
