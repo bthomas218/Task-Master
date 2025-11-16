@@ -1,6 +1,7 @@
 import express from "express";
 import { default as taskRoutes } from "../routes/taskRoutes.js";
 import getClient from "../middleware/dbClient.js";
+import errorHandlingMiddleware from "../middleware/errorHandlingMiddleware.js";
 
 const app = express();
 
@@ -16,4 +17,6 @@ app.get("/", async (req, res) => {
 // API Routes
 app.use("/api", taskRoutes);
 
+// This must be last
+app.use(errorHandlingMiddleware);
 export default app;
