@@ -8,17 +8,10 @@ import { pool } from "../db/pool.js";
  * @returns {Promise<void>}
  */
 const getClient = async (req, res, next) => {
-  try {
-    const client = await pool.connect();
-    req.db = client;
-
-    res.on("finish", () => client.release());
-
-    next();
-  } catch (error) {
-    console.error(`Error connecting to database: ${error.message}`);
-    res.status(500).json({ Error: `Database connection error` });
-  }
+  const client = await pool.connect();
+  req.db = client;
+  res.on("finish", () => client.release());
+  next();
 };
 
 export default getClient;
