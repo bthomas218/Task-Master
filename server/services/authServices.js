@@ -1,5 +1,6 @@
 import { ValidationError, UnauthorizedError } from "../utils/errorHandler.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const SALT_ROUNDS = 10;
 
@@ -44,6 +45,11 @@ export const loginUser = async (db, email, password) => {
   if (!isMatch) {
     throw new UnauthorizedError("Invalid email or password");
   }
-  //TODO: Generate and return jwt
-  return;
+
+  // Generate JWT token
+  const userId = userResult.rows[0].id;
+  const token = jwt.sign({ userId: userId }, process.env.JWT_SECRET, {
+    expiresIn: "1h",
+  });
+  return token;
 };

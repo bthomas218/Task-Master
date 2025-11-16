@@ -11,5 +11,5 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   const { email, password } = req.validated.body;
   const token = await AuthService.loginUser(req.db, email, password); // Token not implemented yet
-  res.status(201).json({ message: "Login successfull" });
+  res.status(201).json({ message: "Login successfull", token: token });
 };
