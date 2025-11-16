@@ -2,6 +2,7 @@ import express from "express";
 import { default as taskRoutes } from "../routes/taskRoutes.js";
 import getClient from "../middleware/dbClient.js";
 import errorHandlingMiddleware from "../middleware/errorHandlingMiddleware.js";
+import { NotFoundError } from "../utils/errorHandler.js";
 
 const app = express();
 
@@ -15,7 +16,12 @@ app.get("/", async (req, res) => {
 });
 
 // API Routes
-app.use("/api", taskRoutes);
+app.use("/api/tasks", taskRoutes);
+
+// Invalid Routes
+app.use((req, res, next) => {
+  throw new NotFoundError("Route not found");
+});
 
 // This must be last
 app.use(errorHandlingMiddleware);
