@@ -40,7 +40,8 @@ Modern ES2022+ syntax with async/await and modular design
    │  └── pool.js
    ├── middleware
    │  ├── dbClient.js
-   │  └── validate.js
+   │  ├── validate.js
+   │  └── errorHandlingMiddleWare.js
    ├── package-lock.json
    ├── package.json
    ├── routes
@@ -53,6 +54,7 @@ Modern ES2022+ syntax with async/await and modular design
    │  ├── app.js
    │  └── server.js
    └── utils
+      └── errorHandler.js
 
 ```
 
@@ -71,10 +73,10 @@ _Live Link coming soon!_
 - `GET /tasks/:id` - Get a specific task by ID
 - `POST /tasks` - Create a new task
   - Request Body:
-    - `description` (string, required) - Description of the task
+    - `desc` (string, required) - Description of the task
     - `status` (string, optional) - Status of the task ((Default)`To do`, `In progress`, `complete`)
 - `PATCH /tasks/:id` - Update the status or description of an existing task with the given ID
   - Request Body:
-    - `description` (string, optional) - New description of the task
+    - `desc` (string, optional) - New description of the task
     - `status` (string, optional) - New status of the task (`To do`, `In progress`, `complete`)
 - `DELETE /tasks/:id` - Delete a task with the given ID
