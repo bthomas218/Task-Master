@@ -28,3 +28,12 @@ export class NotFoundError extends APIError {
     super(message, 404);
   }
 }
+
+/**
+ * Custom Error class for handling unauthorized errors
+ */
+export class UnauthorizedError extends APIError {
+  constructor(message) {
+    super(message, 401);
+  }
+}

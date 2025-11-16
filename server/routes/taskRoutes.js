@@ -13,8 +13,10 @@ import {
   taskIdSchema,
   taskUpdateSchema,
 } from "../schemas/taskSchemas.js";
+import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
+// TODO: Add authMiddleware to protect routes
 
 // Route to create a new task
 router.post("/tasks", validate(taskCreateSchema, "body"), createTaskController);

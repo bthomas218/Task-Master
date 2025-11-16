@@ -1,6 +1,8 @@
 import * as TaskService from "../services/taskService.js";
 import { NotFoundError } from "../utils/errorHandler.js";
 
+//TODO: Update controllers to use authentication info
+
 // Controller to handle creating a new task
 export const createTaskController = async (req, res) => {
   const { desc, status } = req.validated.body;
