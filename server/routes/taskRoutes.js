@@ -19,27 +19,19 @@ const router = express.Router();
 // TODO: Add authMiddleware to protect routes
 
 // Route to create a new task
-router.post("/tasks", validate(taskCreateSchema, "body"), createTaskController);
+router.post("/", validate(taskCreateSchema, "body"), createTaskController);
 // Route to get tasks, optionally filtered by status
-router.get("/tasks", validate(taskQuerySchema, "query"), getTasksController);
+router.get("/", validate(taskQuerySchema, "query"), getTasksController);
 // Route to get a task by its ID
-router.get(
-  "/tasks/:id",
-  validate(taskIdSchema, "params"),
-  getTaskByIdController
-);
+router.get("/:id", validate(taskIdSchema, "params"), getTaskByIdController);
 // Route to update a task
 router.patch(
-  "/tasks/:id",
+  "/:id",
   validate(taskIdSchema, "params"),
   validate(taskUpdateSchema, "body"),
   updateTaskController
 );
 // Route to delete a task
-router.delete(
-  "/tasks/:id",
-  validate(taskIdSchema, "params"),
-  deleteTaskController
-);
+router.delete("/:id", validate(taskIdSchema, "params"), deleteTaskController);
 
 export default router;

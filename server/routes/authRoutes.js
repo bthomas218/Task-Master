@@ -7,9 +7,9 @@ import {
 const router = express.Router();
 
 //Router to handle user registration
-router.post("/api/auth/register", registerController);
+router.post("/register", registerController);
 
 //Router to handle user login
-router.post("/api/auth/login", loginController);
+router.post("/login", loginController);
 
 export default router;

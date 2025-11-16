@@ -9,7 +9,7 @@ import { APIError } from "../utils/errorHandler.js";
  */
 export default function errorHandlingMiddleware(err, req, res, next) {
   const statusCode = err.statusCode || 500;
-  if (statusCode === 500) console.error(`Error: ${err}`);
+  if (statusCode === 500) console.error(`${err}`);
   res.status(statusCode).json({
     error: statusCode === 500 ? "Internal Server Error" : err.message, // Don't leak internal details!!!
   });
