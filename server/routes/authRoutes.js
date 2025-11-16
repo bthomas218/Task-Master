@@ -1,6 +1,6 @@
 import express from "express";
 import * as AuthController from "../controllers/authController.js";
-import { registerSchema } from "../schemas/authSchemas.js";
+import { loginSchema, registerSchema } from "../schemas/authSchemas.js";
 import validate from "../middleware/validate.js";
 
 const router = express.Router();
@@ -13,6 +13,6 @@ router.post(
 );
 
 //Router to handle user login
-router.post("/login", AuthController.login);
+router.post("/login", validate(loginSchema, "body"), AuthController.login);
 
 export default router;

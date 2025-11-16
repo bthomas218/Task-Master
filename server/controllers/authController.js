@@ -7,8 +7,9 @@ export const register = async (req, res) => {
   res.status(201).json({ message: "User registered successfully" });
 };
 
-//TODO: implement login controller
 // Controller to handle user login
 export const login = async (req, res) => {
-  // Login logic here
+  const { email, password } = req.validated.body;
+  const token = await AuthService.loginUser(req.db, email, password); // Token not implemented yet
+  res.status(201).json({ message: "Login successfull" });
 };

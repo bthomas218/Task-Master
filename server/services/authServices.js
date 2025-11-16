@@ -1,4 +1,4 @@
-import { ValidationError } from "../utils/errorHandler.js";
+import { ValidationError, UnauthorizedError } from "../utils/errorHandler.js";
 import bcrypt from "bcrypt";
 
 const SALT_ROUNDS = 10;
@@ -18,21 +18,32 @@ export const registerUser = async (db, email, password) => {
   }
 
   // Hash the password
-  bcrypt.hash(password, SALT_ROUNDS, async (err, hashedPassword) => {
-    if (err) {
-      throw new Error("Error hashing password");
-    }
-
-    // Insert new user into the database
-    const insertUserQuery =
-      "INSERT INTO users (email, password_hash) VALUES ($1, $2)";
-    const insertUserValues = [email, hashedPassword];
-    await db.query(insertUserQuery, insertUserValues);
-  });
+  const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+  // Insert new user into the database
+  const insertUserQuery =
+    "INSERT INTO users (email, password_hash) VALUES ($1, $2)";
+  const insertUserValues = [email, hashedPassword];
+  await db.query(insertUserQuery, insertUserValues);
 };
 
-//TODO: Implement login service
-// Service to handle user login
+/**
+ * Service to login a user
+ * @param {*} db - The database connection
+ * @param {*} email - The user's email
+ * @param {*} password - The user's plaintext password
+ */
 export const loginUser = async (db, email, password) => {
-  // Login logic here
+  // Retrieve user from the database
+  const userQuery = "SELECT email, password_hash FROM users WHERE email = $1";
+  const userResult = await db.query(userQuery, [email]);
+  if (userResult.length === 0) {
+    throw new UnauthorizedError("Invalid email or password");
+  }
+  const storedHash = userResult.rows[0].password_hash;
+  const isMatch = await bcrypt.compare(password, storedHash);
+  if (!isMatch) {
+    throw new UnauthorizedError("Invalid email or password");
+  }
+  //TODO: Generate and return jwt
+  return;
 };
