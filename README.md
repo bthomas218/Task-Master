@@ -112,7 +112,7 @@ _Live Link coming soon!_
 
    - Introduce domain types
 
-   - Add type-safe request/response interfaces 2.
+   - Add type-safe request/response interfaces.
 
 2. Integrate ORM
 
