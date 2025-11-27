@@ -32,27 +32,31 @@ Modern ES2022+ syntax with async/await and modular design
 
 ```text
 .
+├── package-lock.json
+├── package.json
 ├── README.md
-└── server
+└── src
+   ├── app.js
    ├── controllers
+   │  ├── authController.js
    │  └── taskController.js
    ├── db
    │  └── pool.js
    ├── middleware
+   │  ├── authMiddleware.js
    │  ├── dbClient.js
-   │  ├── validate.js
-   │  └── errorHandlingMiddleWare.js
-   ├── package-lock.json
-   ├── package.json
+   │  ├── errorHandlingMiddleware.js
+   │  └── validate.js
    ├── routes
+   │  ├── authRoutes.js
    │  └── taskRoutes.js
    ├── schemas
+   │  ├── authSchemas.js
    │  └── taskSchemas.js
+   ├── server.js
    ├── services
+   │  ├── authServices.js
    │  └── taskService.js
-   ├── src
-   │  ├── app.js
-   │  └── server.js
    └── utils
       └── errorHandler.js
 
@@ -64,7 +68,9 @@ Modern ES2022+ syntax with async/await and modular design
 
 _Live Link coming soon!_
 
-### API Endpoints
+### `/api` Endpoints
+
+#### `/tasks`
 
 - `GET /tasks` - List all tasks
   - Query Parameters:
@@ -80,3 +86,48 @@ _Live Link coming soon!_
     - `desc` (string, optional) - New description of the task
     - `status` (string, optional) - New status of the task (`To do`, `In progress`, `complete`)
 - `DELETE /tasks/:id` - Delete a task with the given ID
+
+#### `/auth`
+
+- `POST /register`
+
+  - Request body:
+  - `email` (string, required) - Register user with this email
+  - `password` (string, min_length: 8, required) - Register user with this password
+
+- `POST /login`
+  - Request body:
+  - `email` (string, required) - Login as the user with this email
+  - `password` (string, required) - Login as the user with this password
+
+---
+
+## 🚧 Roadmap
+
+1. Refactor to TypeScript
+
+   - Migrate JS codebase to full TypeScript
+
+   - Add build pipeline
+
+   - Introduce domain types
+
+   - Add type-safe request/response interfaces 2.
+
+2. Integrate ORM
+
+   - Add Drizzle ORM with PostgreSQL
+
+   - Define database schema in code
+
+   - Generate & run migrations
+
+   - Replace raw SQL with type-safe queries
+
+   - Implement repositories/services with Drizzle
+
+3. Finish Authentication
+   - Implement Authentication Middleware
+   - Protect task routes
+   - Make task controllers use authentication info
+   - Make task services user specific

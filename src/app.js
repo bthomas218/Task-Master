@@ -1,9 +1,9 @@
 import express from "express";
-import { default as taskRoutes } from "../routes/taskRoutes.js";
-import { default as authRoutes } from "../routes/authRoutes.js";
-import getClient from "../middleware/dbClient.js";
-import errorHandlingMiddleware from "../middleware/errorHandlingMiddleware.js";
-import { NotFoundError } from "../utils/errorHandler.js";
+import { default as taskRoutes } from "./routes/taskRoutes.js";
+import { default as authRoutes } from "./routes/authRoutes.js";
+import getClient from "./middleware/dbClient.js";
+import errorHandlingMiddleware from "./middleware/errorHandlingMiddleware.js";
+import { NotFoundError } from "./utils/errorHandler.js";
 
 const app = express();
 
