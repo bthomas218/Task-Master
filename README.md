@@ -116,11 +116,11 @@ _Live Link coming soon!_
 
 2. Integrate ORM
 
-   - Add Drizzle ORM with PostgreSQL
+   - ~~Add Drizzle ORM with PostgreSQL~~
 
-   - Define database schema in code
+   - ~~Define database schema in code~~
 
-   - Generate & run migrations
+   - ~~Generate & run migrations~~
 
    - Replace raw SQL with type-safe queries
 
