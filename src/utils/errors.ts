@@ -38,3 +38,12 @@ export class UnauthorizedError extends APIError {
     super(message, 401);
   }
 }
+
+/**
+ * Custom Error class for handling forbidden errors
+ */
+export class ForbiddenError extends APIError {
+  constructor(message: string) {
+    super(message, 403);
+  }
+}
