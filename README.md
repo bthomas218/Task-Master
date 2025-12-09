@@ -127,7 +127,7 @@ _Live Link coming soon!_
    - Implement repositories/services with Drizzle
 
 3. Finish Authentication
-   - Implement Authentication Middleware
+   - ~~Implement Authentication Middleware~~
    - Protect task routes
    - Make task controllers use authentication info
    - Make task services user specific
