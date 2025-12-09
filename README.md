@@ -110,7 +110,7 @@ _Live Link coming soon!_
 
    - Add build pipeline
 
-   - Introduce domain types
+   - ~~Introduce domain types~~
 
    - Add type-safe request/response interfaces.
 
@@ -122,12 +122,12 @@ _Live Link coming soon!_
 
    - ~~Generate & run migrations~~
 
-   - Replace raw SQL with type-safe queries
+   - ~~Replace raw SQL with type-safe queries~~
 
    - Implement repositories/services with Drizzle
 
 3. Finish Authentication
    - ~~Implement Authentication Middleware~~
-   - Protect task routes
+   - ~~Protect task routes~~
    - Make task controllers use authentication info
    - Make task services user specific
