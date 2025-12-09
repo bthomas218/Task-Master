@@ -1,0 +1,35 @@
+import type { RequestHandler } from "express";
+import e from "express";
+import { BadRequestError } from "src/utils/errors";
+import { ZodType, z } from "zod";
+
+const validate = (
+  schema: ZodType<any>,
+  property: "body" | "params" | "query"
+): RequestHandler => {
+  return async (req, res, next) => {
+    try {
+      const parsedData = await schema.parseAsync(req[property]);
+      req[property] = parsedData;
+      next();
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        throw new BadRequestError(
+          `Validation failed: ${z.prettifyError(error)}`
+        );
+      } else {
+        next(error);
+      }
+    }
+  };
+};
+
+export const validateBody = (schema: ZodType<any>): RequestHandler => {
+  return validate(schema, "body");
+};
+export const validateParams = (schema: ZodType<any>): RequestHandler => {
+  return validate(schema, "params");
+};
+export const validateQuery = (schema: ZodType<any>): RequestHandler => {
+  return validate(schema, "query");
+};

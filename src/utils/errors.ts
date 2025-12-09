@@ -13,9 +13,9 @@ export class APIError extends Error {
 }
 
 /**
- * Custom Error class for handling validation errors
+ * Custom Error class for handling bad request errors
  */
-export class ValidationError extends APIError {
+export class BadRequestError extends APIError {
   constructor(message: string) {
     super(message, 400);
   }
