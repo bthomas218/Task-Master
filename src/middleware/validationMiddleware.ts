@@ -1,6 +1,5 @@
 import type { RequestHandler } from "express";
-import e from "express";
-import { BadRequestError } from "src/utils/errors";
+import { BadRequestError } from "../utils/errors.js";
 import { ZodType, z } from "zod";
 
 const validate = (
