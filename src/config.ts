@@ -6,6 +6,7 @@ type Config = {
   port: number;
   host: string;
   db: DbConfig;
+  jwtSecret: string;
 };
 
 type DbConfig = {
@@ -26,6 +27,7 @@ const cfg: Config = {
   db: {
     url: validateEnv("DATABASE_URL"),
   },
+  jwtSecret: validateEnv("JWT_SECRET"),
 };
 
 export default cfg;

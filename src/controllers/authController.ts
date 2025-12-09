@@ -20,6 +20,6 @@ export const login = async (
   res: Response
 ) => {
   const { email, password } = req.body;
-  const user = await authService.authenticateUser(email, password);
-  res.status(200).json(user);
+  const token = await authService.authenticateUser(email, password);
+  res.status(200).json({ token: token });
 };

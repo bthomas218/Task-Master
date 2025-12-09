@@ -1,7 +1,8 @@
 import { createNewUser, getUserByEmail } from "../db/queries/users.js";
-import { hashPassword, verifyPassword } from "../utils/auth.js";
+import { hashPassword, verifyPassword, generateToken } from "../utils/auth.js";
 import { BadRequestError, UnauthorizedError } from "../utils/errors.js";
 import { omit } from "../utils/typing.js";
+import cfg from "../config.js";
 
 /**
  * Service to register a new user
@@ -31,5 +32,5 @@ export async function authenticateUser(email: string, password: string) {
     throw new UnauthorizedError("Invalid email or password");
   }
 
-  return omit(user, "passwordHash"); // TODO: Return JWT or session info instead
+  return generateToken(user.id, 3600, cfg.jwtSecret);
 }
