@@ -7,6 +7,14 @@ const validate = (
   property: "body" | "params" | "query"
 ): RequestHandler => {
   return async (req, res, next) => {
+    if (property === "query") {
+      Object.defineProperty(req, "query", {
+        value: { ...req.query }, // Create a new mutable object from the original query
+        writable: true,
+        configurable: true,
+        enumerable: true,
+      });
+    }
     try {
       const parsedData = await schema.parseAsync(req[property]);
       req[property] = parsedData;

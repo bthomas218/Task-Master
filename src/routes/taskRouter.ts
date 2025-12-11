@@ -11,6 +11,7 @@ import {
   validateParams,
 } from "../middleware/validationMiddleware.js";
 import authMiddleware from "../middleware/authMiddleware.js";
+import * as taskController from "../controllers/taskController.js";
 
 const taskRouter = express.Router();
 
@@ -19,31 +20,25 @@ taskRouter.use(authMiddleware);
 taskRouter.post(
   "/",
   authMiddleware,
-  validateBody(taskCreateSchema)
-  //TODO: Controller function to create a task goes here
+  validateBody(taskCreateSchema),
+  taskController.createTask
 );
 
-taskRouter.get(
-  "/",
-  validateQuery(taskQuerySchema)
-  //TODO: Controller function to get tasks goes here
-);
+taskRouter.get("/", validateQuery(taskQuerySchema), taskController.listTasks);
 
-taskRouter.get(
-  "/:id",
-  validateParams(taskIdSchema)
-  //TODO: Controller function to get a specific task goes here
-);
+taskRouter.get("/:id", validateParams(taskIdSchema), taskController.getTask);
 
 taskRouter.put(
   "/:id",
   validateParams(taskIdSchema),
-  validateBody(taskUpdateSchema)
-  //TODO: Controller function to update a task goes here
+  validateBody(taskUpdateSchema),
+  taskController.updateTask
 );
 
 taskRouter.delete(
   "/:id",
-  validateParams(taskIdSchema)
-  //TODO: Controller function to delete a task goes here
+  validateParams(taskIdSchema),
+  taskController.deleteTask
 );
+
+export default taskRouter;

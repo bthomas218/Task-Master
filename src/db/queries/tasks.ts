@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import db from "../index.js";
 import { tasks } from "../schema.js";
 import type { Task, NewTask } from "../schema.js";
@@ -30,7 +30,18 @@ export async function getTaskbyId(id: string) {
   return result;
 }
 
-export async function getTasksByUserId(userId: string) {
-  const result = await db.select().from(tasks).where(eq(tasks.userId, userId));
+export async function getTasksByUserId(
+  userId: string,
+  status?: "to do" | "in progress" | "complete"
+) {
+  const result = await db
+    .select()
+    .from(tasks)
+    .where(
+      and(
+        eq(tasks.userId, userId),
+        status ? eq(tasks.status, status) : undefined
+      )
+    );
   return result;
 }
