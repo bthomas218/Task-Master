@@ -11,7 +11,7 @@ export const taskUpdateSchema = z.object({
 });
 
 export const taskQuerySchema = z.object({
-  status: z.enum(["all", "to do", "in progress", "complete"]).default("all"),
+  status: z.enum(["all", "to do", "in progress", "complete"]).optional(),
 });
 
 export const taskIdSchema = z.object({

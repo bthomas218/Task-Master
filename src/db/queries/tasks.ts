@@ -1,7 +1,7 @@
 import { eq, and } from "drizzle-orm";
 import db from "../index.js";
 import { tasks } from "../schema.js";
-import type { Task, NewTask } from "../schema.js";
+import type { Task, NewTask, TaskStatus } from "../schema.js";
 
 export async function createNewTask(task: NewTask) {
   const [result] = await db.insert(tasks).values(task).returning();
@@ -30,10 +30,7 @@ export async function getTaskbyId(id: string) {
   return result;
 }
 
-export async function getTasksByUserId(
-  userId: string,
-  status?: "to do" | "in progress" | "complete"
-) {
+export async function getTasksByUserId(userId: string, status?: TaskStatus) {
   const result = await db
     .select()
     .from(tasks)

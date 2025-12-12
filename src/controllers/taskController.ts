@@ -1,8 +1,10 @@
 import type { Request, Response } from "express";
+import * as taskService from "../services/taskService.js";
+import { TaskStatus } from "../db/schema.js";
 
 interface RequestBody {
   description: string;
-  status: string;
+  status: "to do" | "in progress" | "complete" | undefined;
 }
 
 export async function createTask(
@@ -10,21 +12,27 @@ export async function createTask(
   res: Response
 ) {
   const { description, status } = req.body;
-  res.json({
-    message: `Creating task`,
+  const userId = req.user!.id; // Route is protected so safe to assert its existence
+  const task = await taskService.createTask(userId, {
     description: description,
     status: status,
+    userId: userId,
   });
+  res.json(task);
 }
 
 export async function listTasks(req: Request, res: Response) {
-  const { status } = req.query;
-  res.json({ message: `Listing tasks`, status: status });
+  const { status } = req.query as { status?: TaskStatus };
+  const userId = req.user!.id;
+  const tasks = await taskService.listTasks(userId, status);
+  res.json(tasks);
 }
 
 export async function getTask(req: Request, res: Response) {
-  const { id } = req.params;
-  res.json({ message: `Getting task`, id: id });
+  const { id: taskId } = req.params;
+  const userId = req.user!.id;
+  const task = await taskService.getTask(userId, taskId);
+  res.json(task);
 }
 
 export async function updateTask(req: Request, res: Response) {
@@ -35,10 +43,11 @@ export async function updateTask(req: Request, res: Response) {
     id: id,
     description: description,
     status: status,
+    user: req.user?.id,
   });
 }
 
 export async function deleteTask(req: Request, res: Response) {
   const { id } = req.params;
-  res.json({ message: `Deleting task`, id: id });
+  res.json({ message: `Deleting task`, id: id, user: req.user?.id });
 }

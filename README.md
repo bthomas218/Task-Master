@@ -112,7 +112,7 @@ _Live Link coming soon!_
 
    - ~~Introduce domain types~~
 
-   - Add type-safe request/response interfaces.
+   - ~~Add type-safe request/response interfaces.~~
 
 2. Integrate ORM
 
@@ -129,5 +129,5 @@ _Live Link coming soon!_
 3. Finish Authentication
    - ~~Implement Authentication Middleware~~
    - ~~Protect task routes~~
-   - Make task controllers use authentication info
+   - ~~Make task controllers use authentication info~~
    - Make task services user specific
