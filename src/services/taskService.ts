@@ -3,6 +3,8 @@ import {
   createNewTask,
   getTaskbyId,
   getTasksByUserId,
+  updateTaskById,
+  deleteTaskById,
 } from "../db/queries/tasks.js";
 import { getUserById } from "../db/queries/users.js";
 import { NewTask, TaskStatus } from "../db/schema.js";
@@ -56,4 +58,39 @@ export async function getTask(userId: string, taskId: string) {
   return task;
 }
 
-//TODO: implement updateTask and deleteTask functions
+/**
+ * Updates a task for the specified user
+ * @param userId the userId of the user who owns the task
+ * @param taskId the ID of the task to update
+ * @param updates the fields to update
+ * @returns the updated task
+ */
+export async function updateTask(
+  userId: string,
+  taskId: string,
+  updates: Partial<NewTask>
+) {
+  const user = await getUserById(userId);
+  if (!user) throw new NotFoundError("User not found");
+
+  const task = await getTaskbyId(taskId);
+  if (!task) throw new NotFoundError("Task not found");
+  if (task.userId !== user.id)
+    throw new ForbiddenError("Access to task denied");
+
+  const updatedTask = updateTaskById(task.id, updates);
+  return updatedTask;
+}
+
+export async function deleteTask(userId: string, taskId: string) {
+  const user = await getUserById(userId);
+  if (!user) throw new NotFoundError("User not found");
+
+  const task = await getTaskbyId(taskId);
+  if (!task) throw new NotFoundError("Task not found");
+  if (task.userId !== user.id)
+    throw new ForbiddenError("Access to task denied");
+
+  const deletedTask = deleteTaskById(task.id);
+  return deletedTask;
+}

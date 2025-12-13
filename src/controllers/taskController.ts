@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import * as taskService from "../services/taskService.js";
 import { TaskStatus } from "../db/schema.js";
+import { desc } from "drizzle-orm";
 
 interface RequestBody {
   description: string;
@@ -38,16 +39,19 @@ export async function getTask(req: Request, res: Response) {
 export async function updateTask(req: Request, res: Response) {
   const { id } = req.params;
   const { description, status } = req.body;
-  res.json({
-    message: `Updating task`,
-    id: id,
-    description: description,
-    status: status,
-    user: req.user?.id,
+  if (!description && !status) {
+    return res.status(204).send();
+  }
+  const task = await taskService.updateTask(req.user!.id, id, {
+    description,
+    status,
   });
+  res.json(task);
 }
 
 export async function deleteTask(req: Request, res: Response) {
   const { id } = req.params;
-  res.json({ message: `Deleting task`, id: id, user: req.user?.id });
+
+  const task = await taskService.deleteTask(req.user!.id, id);
+  res.json(task);
 }

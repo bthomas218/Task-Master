@@ -8,9 +8,9 @@ export async function createNewTask(task: NewTask) {
   return result;
 }
 
-export async function updateTask(
+export async function updateTaskById(
   id: string,
-  updatedFields: Partial<Omit<NewTask, "id" | "userId">>
+  updatedFields: Partial<NewTask>
 ) {
   const [result] = await db
     .update(tasks)
