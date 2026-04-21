@@ -10,7 +10,7 @@ export async function createNewTask(task: NewTask) {
 
 export async function updateTaskById(
   id: string,
-  updatedFields: Partial<NewTask>
+  updatedFields: Partial<NewTask>,
 ) {
   const [result] = await db
     .update(tasks)
@@ -25,8 +25,11 @@ export async function deleteTaskById(id: string) {
   return result;
 }
 
-export async function getTaskbyId(id: string) {
-  const [result] = await db.select().from(tasks).where(eq(tasks.id, id));
+export async function getTaskbyId(taskId: string, userId: string) {
+  const [result] = await db
+    .select()
+    .from(tasks)
+    .where(and(eq(tasks.id, taskId), eq(tasks.userId, userId)));
   return result;
 }
 
@@ -37,8 +40,8 @@ export async function getTasksByUserId(userId: string, status?: TaskStatus) {
     .where(
       and(
         eq(tasks.userId, userId),
-        status ? eq(tasks.status, status) : undefined
-      )
+        status ? eq(tasks.status, status) : undefined,
+      ),
     );
   return result;
 }

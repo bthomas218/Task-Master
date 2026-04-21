@@ -1,4 +1,3 @@
-import { notEqual } from "assert";
 import {
   createNewTask,
   getTaskbyId,
@@ -17,12 +16,7 @@ import { ForbiddenError, NotFoundError } from "../utils/errors.js";
  * @returns the created task
  */
 export async function createTask(userId: string, task: NewTask) {
-  const user = await getUserById(userId);
-  if (!user) throw new NotFoundError("User not found");
-
-  task.userId = user.id;
-
-  return await createNewTask(task);
+  return await createNewTask({ ...task, userId });
 }
 
 /**
@@ -32,11 +26,7 @@ export async function createTask(userId: string, task: NewTask) {
  * @returns the list of tasks as an array
  */
 export async function listTasks(userId: string, status?: TaskStatus) {
-  const user = await getUserById(userId);
-  if (!user) throw new NotFoundError("User not found");
-
   const tasks = await getTasksByUserId(userId, status);
-
   return tasks;
 }
 
@@ -47,14 +37,8 @@ export async function listTasks(userId: string, status?: TaskStatus) {
  * @returns the task
  */
 export async function getTask(userId: string, taskId: string) {
-  const user = await getUserById(userId);
-  if (!user) throw new NotFoundError("User not found");
-
-  const task = await getTaskbyId(taskId);
+  const task = await getTaskbyId(taskId, userId);
   if (!task) throw new NotFoundError("Task not found");
-  if (task.userId !== user.id)
-    throw new ForbiddenError("Access to task denied");
-
   return task;
 }
 
@@ -70,26 +54,16 @@ export async function updateTask(
   taskId: string,
   updates: Partial<NewTask>,
 ) {
-  const user = await getUserById(userId);
-  if (!user) throw new NotFoundError("User not found");
-
-  const task = await getTaskbyId(taskId);
+  const task = await getTaskbyId(taskId, userId);
   if (!task) throw new NotFoundError("Task not found");
-  if (task.userId !== user.id)
-    throw new ForbiddenError("Access to task denied");
 
   const updatedTask = await updateTaskById(task.id, updates);
   return updatedTask;
 }
 
 export async function deleteTask(userId: string, taskId: string) {
-  const user = await getUserById(userId);
-  if (!user) throw new NotFoundError("User not found");
-
-  const task = await getTaskbyId(taskId);
+  const task = await getTaskbyId(taskId, userId);
   if (!task) throw new NotFoundError("Task not found");
-  if (task.userId !== user.id)
-    throw new ForbiddenError("Access to task denied");
 
   const deletedTask = await deleteTaskById(task.id);
   return deletedTask;
