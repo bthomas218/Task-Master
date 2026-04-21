@@ -78,7 +78,7 @@ export async function updateTask(
   if (task.userId !== user.id)
     throw new ForbiddenError("Access to task denied");
 
-  const updatedTask = updateTaskById(task.id, updates);
+  const updatedTask = await updateTaskById(task.id, updates);
   return updatedTask;
 }
 
@@ -91,6 +91,6 @@ export async function deleteTask(userId: string, taskId: string) {
   if (task.userId !== user.id)
     throw new ForbiddenError("Access to task denied");
 
-  const deletedTask = deleteTaskById(task.id);
+  const deletedTask = await deleteTaskById(task.id);
   return deletedTask;
 }
