@@ -24,6 +24,7 @@ export const tasks = pgTable("tasks", {
     .notNull()
     .defaultNow()
     .$onUpdate(() => new Date()),
+  completedAt: timestamp("completed_at"),
   description: varchar("description").notNull(),
   status: taskStatusEnum("status").notNull().default("to do"),
   userId: uuid("user_id")
