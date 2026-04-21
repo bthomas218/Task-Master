@@ -25,7 +25,7 @@ export async function deleteTaskById(id: string) {
   return result;
 }
 
-export async function getTaskbyId(taskId: string, userId: string) {
+export async function getTaskbyIdAndUserId(taskId: string, userId: string) {
   const [result] = await db
     .select()
     .from(tasks)

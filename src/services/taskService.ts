@@ -1,6 +1,6 @@
 import {
   createNewTask,
-  getTaskbyId,
+  getTaskbyIdAndUserId,
   getTasksByUserId,
   updateTaskById,
   deleteTaskById,
@@ -16,7 +16,7 @@ import { NotFoundError } from "../utils/errors.js";
  * @throws NotFoundError if the task is not found
  */
 async function ensureTaskExists(taskId: string, userId: string): Promise<Task> {
-  const task = await getTaskbyId(taskId, userId);
+  const task = await getTaskbyIdAndUserId(taskId, userId);
   if (!task) throw new NotFoundError("Task not found");
   return task;
 }
