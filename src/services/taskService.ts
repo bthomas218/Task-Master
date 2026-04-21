@@ -2,8 +2,8 @@ import {
   createNewTask,
   getTaskbyIdAndUserId,
   getTasksByUserId,
-  updateTaskById,
-  deleteTaskById,
+  updateTaskByIdAndUserId,
+  deleteTaskByIdAndUserId,
 } from "../db/queries/tasks.js";
 import type { NewTask, TaskStatus, Task } from "../db/schema.js";
 import { NotFoundError } from "../utils/errors.js";
@@ -64,15 +64,13 @@ export async function updateTask(
   taskId: string,
   updates: Partial<NewTask>,
 ) {
-  const task = await ensureTaskExists(taskId, userId);
-
-  const updatedTask = await updateTaskById(task.id, updates);
+  const updatedTask = await updateTaskByIdAndUserId(taskId, userId, updates);
+  if (!updatedTask) throw new NotFoundError("Task not found");
   return updatedTask;
 }
 
 export async function deleteTask(userId: string, taskId: string) {
-  const task = await ensureTaskExists(taskId, userId);
-
-  const deletedTask = await deleteTaskById(task.id);
+  const deletedTask = await deleteTaskByIdAndUserId(taskId, userId);
+  if (!deletedTask) throw new NotFoundError("Task not found");
   return deletedTask;
 }

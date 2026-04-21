@@ -8,20 +8,24 @@ export async function createNewTask(task: NewTask) {
   return result;
 }
 
-export async function updateTaskById(
-  id: string,
+export async function updateTaskByIdAndUserId(
+  taskId: string,
+  userId: string,
   updatedFields: Partial<NewTask>,
 ) {
   const [result] = await db
     .update(tasks)
     .set(updatedFields)
-    .where(eq(tasks.id, id))
+    .where(and(eq(tasks.id, taskId), eq(tasks.userId, userId)))
     .returning();
   return result;
 }
 
-export async function deleteTaskById(id: string) {
-  const [result] = await db.delete(tasks).where(eq(tasks.id, id)).returning();
+export async function deleteTaskByIdAndUserId(taskId: string, userId: string) {
+  const [result] = await db
+    .delete(tasks)
+    .where(and(eq(tasks.id, taskId), eq(tasks.userId, userId)))
+    .returning();
   return result;
 }
 
