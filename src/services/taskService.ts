@@ -55,6 +55,8 @@ export async function updateTask(
 ) {
   if (updates.status === "complete") {
     updates.completedAt = new Date();
+  } else if (updates.status) {
+    updates.completedAt = null;
   }
   const updatedTask = await updateTaskByIdAndUserId(taskId, userId, updates);
   if (!updatedTask) throw new NotFoundError("Task not found");
