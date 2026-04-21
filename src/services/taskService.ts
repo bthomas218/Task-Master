@@ -9,19 +9,6 @@ import type { NewTask, TaskStatus, Task } from "../db/schema.js";
 import { NotFoundError } from "../utils/errors.js";
 
 /**
- * Helper function to ensure a task exists and belongs to the user
- * @param taskId the ID of the task
- * @param userId the ID of the user
- * @returns the task if it exists
- * @throws NotFoundError if the task is not found
- */
-async function ensureTaskExists(taskId: string, userId: string): Promise<Task> {
-  const task = await getTaskbyIdAndUserId(taskId, userId);
-  if (!task) throw new NotFoundError("Task not found");
-  return task;
-}
-
-/**
  * Creates a task for the specified user
  * @param userId: the userId of the user the new task belongs to
  * @param newTask: the task
@@ -49,7 +36,9 @@ export async function listTasks(userId: string, status?: TaskStatus) {
  * @returns the task
  */
 export async function getTask(userId: string, taskId: string) {
-  return await ensureTaskExists(taskId, userId);
+  const task = await getTaskbyIdAndUserId(taskId, userId);
+  if (!task) throw new NotFoundError("Task not found");
+  return task;
 }
 
 /**
