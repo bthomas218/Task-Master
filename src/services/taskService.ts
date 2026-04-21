@@ -7,7 +7,7 @@ import {
   deleteTaskById,
 } from "../db/queries/tasks.js";
 import { getUserById } from "../db/queries/users.js";
-import { NewTask, TaskStatus } from "../db/schema.js";
+import type { NewTask, TaskStatus } from "../db/schema.js";
 import { ForbiddenError, NotFoundError } from "../utils/errors.js";
 
 /**
@@ -68,7 +68,7 @@ export async function getTask(userId: string, taskId: string) {
 export async function updateTask(
   userId: string,
   taskId: string,
-  updates: Partial<NewTask>
+  updates: Partial<NewTask>,
 ) {
   const user = await getUserById(userId);
   if (!user) throw new NotFoundError("User not found");

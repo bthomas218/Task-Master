@@ -1,6 +1,6 @@
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
-import { JwtPayload } from "jsonwebtoken";
+import { type JwtPayload } from "jsonwebtoken";
 
 export async function hashPassword(password: string) {
   return await argon2.hash(password);
@@ -8,7 +8,7 @@ export async function hashPassword(password: string) {
 
 export async function verifyPassword(
   hashedPassword: string,
-  plainPassword: string
+  plainPassword: string,
 ) {
   return await argon2.verify(hashedPassword, plainPassword);
 }
@@ -24,7 +24,7 @@ type payload = Pick<JwtPayload, "iss" | "sub" | "iat" | "exp">;
 export function generateToken(
   userId: string,
   expiresIn: number,
-  jwtSecret: string
+  jwtSecret: string,
 ) {
   const iat = Math.floor(Date.now() / 1000);
   const exp = iat + expiresIn;
