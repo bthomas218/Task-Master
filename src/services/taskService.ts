@@ -5,9 +5,21 @@ import {
   updateTaskById,
   deleteTaskById,
 } from "../db/queries/tasks.js";
-import { getUserById } from "../db/queries/users.js";
-import type { NewTask, TaskStatus } from "../db/schema.js";
-import { ForbiddenError, NotFoundError } from "../utils/errors.js";
+import type { NewTask, TaskStatus, Task } from "../db/schema.js";
+import { NotFoundError } from "../utils/errors.js";
+
+/**
+ * Helper function to ensure a task exists and belongs to the user
+ * @param taskId the ID of the task
+ * @param userId the ID of the user
+ * @returns the task if it exists
+ * @throws NotFoundError if the task is not found
+ */
+async function ensureTaskExists(taskId: string, userId: string): Promise<Task> {
+  const task = await getTaskbyId(taskId, userId);
+  if (!task) throw new NotFoundError("Task not found");
+  return task;
+}
 
 /**
  * Creates a task for the specified user
@@ -37,9 +49,7 @@ export async function listTasks(userId: string, status?: TaskStatus) {
  * @returns the task
  */
 export async function getTask(userId: string, taskId: string) {
-  const task = await getTaskbyId(taskId, userId);
-  if (!task) throw new NotFoundError("Task not found");
-  return task;
+  return await ensureTaskExists(taskId, userId);
 }
 
 /**
@@ -54,16 +64,14 @@ export async function updateTask(
   taskId: string,
   updates: Partial<NewTask>,
 ) {
-  const task = await getTaskbyId(taskId, userId);
-  if (!task) throw new NotFoundError("Task not found");
+  const task = await ensureTaskExists(taskId, userId);
 
   const updatedTask = await updateTaskById(task.id, updates);
   return updatedTask;
 }
 
 export async function deleteTask(userId: string, taskId: string) {
-  const task = await getTaskbyId(taskId, userId);
-  if (!task) throw new NotFoundError("Task not found");
+  const task = await ensureTaskExists(taskId, userId);
 
   const deletedTask = await deleteTaskById(task.id);
   return deletedTask;
