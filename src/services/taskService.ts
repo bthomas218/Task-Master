@@ -1,6 +1,6 @@
 import {
   createNewTask,
-  getTaskbyIdAndUserId,
+  getTaskByIdAndUserId,
   getTasksByUserId,
   updateTaskByIdAndUserId,
   deleteTaskByIdAndUserId,
@@ -36,7 +36,7 @@ export async function listTasks(userId: string, status?: TaskStatus) {
  * @returns the task
  */
 export async function getTask(userId: string, taskId: string) {
-  const task = await getTaskbyIdAndUserId(taskId, userId);
+  const task = await getTaskByIdAndUserId(taskId, userId);
   if (!task) throw new NotFoundError("Task not found");
   return task;
 }

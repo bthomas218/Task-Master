@@ -29,7 +29,7 @@ export async function deleteTaskByIdAndUserId(taskId: string, userId: string) {
   return result;
 }
 
-export async function getTaskbyIdAndUserId(taskId: string, userId: string) {
+export async function getTaskByIdAndUserId(taskId: string, userId: string) {
   const [result] = await db
     .select()
     .from(tasks)
