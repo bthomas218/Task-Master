@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  COMPLETE
+}
+
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  tasks        Task[]
+
+  @@map("users")
+}
+
+model Task {
+  id          String     @id @default(uuid()) @db.Uuid
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  completedAt DateTime?  @map("completed_at")
+  description String
+  status      TaskStatus @default(TODO)
+  userId      String     @map("user_id") @db.Uuid
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("tasks")
+}
